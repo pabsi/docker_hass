@@ -1,0 +1,25 @@
+name: Build and release docker image
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  build_and_release:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Login to DockerHub Registry
+      run: echo ${{ secrets.DOCKERHUB_PASS }} | docker login -u pabsi --password-stdin
+    - name: Set the version tag
+      id: vars
+      run: echo ::set-output name=tag::$(echo ${GITHUB_REF:10})
+    - name: Build the tagged Docker image
+      run: docker build . --file Dockerfile --tag pabsi/hass:${{steps.vars.outputs.tag}}
+    - name: Push the tagged Docker image
+      run: docker push pabsi/hass:${{steps.vars.outputs.tag}}
+    - name: Tag the latest Docker image
+      run: docker tag pabsi/hass:${{steps.vars.outputs.tag}} pabsi/hass:latest
+    - name: Push the latest Docker image
+      run: docker push pabsi/hass:latest
+      
