@@ -1,4 +1,4 @@
-FROM homeassistant/home-assistant:2021.1.5
+FROM homeassistant/home-assistant:2021.3.4
 
 # Samba common tools
 # Remotely send commands to Windows 10
